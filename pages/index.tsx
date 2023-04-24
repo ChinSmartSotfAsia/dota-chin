@@ -67,7 +67,7 @@ function Page({heroes}:InferGetServerSidePropsType<typeof getServerSideProps>) {
   
   return (
     <>
-      <div className="navbar">
+      <div className="relative mb-4 flex w-full flex-wrap items-stretch ">
         <input
           type="text"
           placeholder="Search..."
@@ -115,7 +115,7 @@ function Page({heroes}:InferGetServerSidePropsType<typeof getServerSideProps>) {
               {<p>Attraction : {item.primary_attr}</p>}
               {<p>Type : {item.attack_type}</p>}
               {<Link href={"/attractions/" + item.id}> Read More</Link>}
-              <button className="save-button" onClick={()=>saveItem(item)}> Add Favorite </button>
+              <button className="bg-lime-500  save-button" onClick={()=>saveItem(item)}> Add Favorite </button>
             </div>
           </div>
         ))}
