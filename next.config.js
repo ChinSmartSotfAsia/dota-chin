@@ -2,9 +2,14 @@
 const nextConfig = {
   experimental: {
     appDir: true,
-  },images: {
+  }, images: {
     domains: ['api.opendota.com'],
   },
+  webpack: config => {
+    config.resolve.preferRelative = true
+    return config
+  }
+
 }
 
 
