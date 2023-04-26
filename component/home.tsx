@@ -1,19 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import Link from "next/link";
 import { Heroes } from "@/lib/type";
-import tw from 'twin.macro';
-import "@emotion/css"
+import tw from "twin.macro";
+import "@emotion/css";
+import Image from "next/image";
 
+const FilterHeroes = tw.div`flex justify-center text-gray-600 focus-within:text-gray-400`;
 
-const Select = tw.select`px-5 py-4 m-2 text-sm text-white bg-gray-900 rounded-md`
+const Select = tw.select`px-6 py-4 m-3 text-sm text-white bg-gray-800 rounded-md `;
+
+const Detail = tw.ul`text-lg text-gray-900`;
+
+const Tital = tw.h1`text-2xl font-bold text-gray-900`;
+
+const Buttom = tw.button`inline-block px-4 py-2 mt-1 text-base font-medium text-white bg-green-500 rounded-md hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`;
+
+const Card = tw.div`shadow-lg rounded-xl`;
+
+const CardBody = tw.div`flex flex-col p-5`;
+
+const CardImage = tw.div`overflow-hidden rounded-xl`;
 
 type homeProps = {
     heroes: Heroes[];
-}
+};
 export const Home = ({ heroes }: homeProps) => {
-    const [filter, setFilter] = useState('');// ใช้เพื่อเก็บค่าที่เราเลือกใน select แล้วส่งไปให้ Page
-    const [sort, setSort] = useState('id');
-    const [search, setSearch] = useState('');
+    const [filter, setFilter] = useState("");
+    const [sort, setSort] = useState("id");
+    const [search, setSearch] = useState("");
     /* console.log(heroes); */
 
     console.log(filter);
@@ -21,17 +35,21 @@ export const Home = ({ heroes }: homeProps) => {
     console.log(search);
 
     function saveItem(heroes: Heroes) {
-        const favoriteObj = JSON.parse(localStorage.getItem('favorite') || '[]');
-        const index = favoriteObj.findIndex((item: Heroes) => item.id === heroes.id);
+        const favoriteObj = JSON.parse(localStorage.getItem("favorite") || "[]");
+        const index = favoriteObj.findIndex(
+            (item: Heroes) => item.id === heroes.id
+        );
         if (index === -1) {
             favoriteObj.push(heroes);
         } else {
             favoriteObj.splice(index, 1);
         }
-        localStorage.setItem('favorite', JSON.stringify(favoriteObj));
+        localStorage.setItem("favorite", JSON.stringify(favoriteObj));
     }
 
-    const searchHeroes = heroes.filter((item) => item.localized_name.toLowerCase().includes(search.toLowerCase()));//ทำการค้นหาข้อมูลที่เราต้องการ
+    const searchHeroes = heroes.filter((item) =>
+        item.localized_name.toLowerCase().includes(search.toLowerCase())
+    ); //ทำการค้นหาข้อมูล
 
     const sortedHeroes = searchHeroes.sort((a, b) => {
         if (sort === "acs") {
@@ -41,22 +59,34 @@ export const Home = ({ heroes }: homeProps) => {
         } else {
             return 0;
         }
-    }) // ทำการเรียงข้อมูลที่เราต้องการ
+    }); // ทำการเรียงข้อมูล
 
-    const filterHeroes = sortedHeroes.filter((item) => item.attack_type === filter || item.primary_attr === filter || filter === "");// ทำการกรองข้อมูลที่เราต้องการ
+    const filterHeroes = sortedHeroes.filter(
+        (item) =>
+            item.attack_type === filter ||
+            item.primary_attr === filter ||
+            filter === ""
+    ); // ทำการกรองข้อมูล
 
-    
     return (
         <>
-            <div className="flex justify-center text-gray-600 focus-within:text-gray-400 ">
-                <input type="text" className="px-10 py-4 m-3 text-sm text-white bg-gray-900 rounded-md " placeholder="Search..." value={search}
+            <FilterHeroes>
+                <input
+                    type="text"
+                    className="px-10 py-4 m-3 text-sm text-white bg-gray-800 rounded-md "
+                    placeholder="Search..."
+                    value={search}
                     onChange={(e) => {
                         setSearch(e.target.value);
-                    }} />
+                    }}
+                />
 
-                <Select data-te-select-init onChange={(e) => {
-                    setFilter(e.target.value);
-                }}>
+                <Select
+                    data-te-select-init
+                    onChange={(e) => {
+                        setFilter(e.target.value);
+                    }}
+                >
                     <option value="">All</option>
                     <option value="agi">Agility</option>
                     <option value="int">Intelligence</option>
@@ -64,36 +94,58 @@ export const Home = ({ heroes }: homeProps) => {
                     <option value="Melee">Melee</option>
                     <option value="Ranged">Ranged</option>
                 </Select>
-                <Select data-te-select-init onChange={(e) => {
-                    setSort(e.target.value);
-                }}>
+                <Select
+                    data-te-select-init
+                    onChange={(e) => {
+                        setSort(e.target.value);
+                    }}
+                >
                     <option value="id">All</option>
                     <option value="acs">Ascending</option>
                     <option value="desc">Descending</option>
                 </Select>
-            </div>
+            </FilterHeroes>
 
             <div className="container flex items-center justify-center min-h-screen mx-auto">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {filterHeroes.map((item: Heroes) => (
-                        <div className="shadow-lg rounded-xl">
-                            <div className="flex flex-col p-5">
-                                <div className="overflow-hidden rounded-xl" key={item.id}>
-                                    <img className="w-full" src={`https://api.opendota.com${item.img}`} />
+                        <Card>
+                            <CardBody>
+                                <CardImage key={item.id}>
+                                    <Image
+                                        className="w-full "
+                                        src={`https://api.opendota.com${item.img}`}
+                                        alt={"item"}
+                                        width={300}
+                                        height={300}
+                                    />
+                                </CardImage>
+                                <div>
+                                    <Tital>
+                                        Name : {item.localized_name}
+                                    </Tital>
+                                    <Detail>
+                                        <li>Attraction : {item.primary_attr}</li>
+                                        <li>Type : {item.attack_type}</li>
+                                    </Detail>
+                                    <Link
+                                        className="text-lg text-sky-700 hover:text-sky-500"
+                                        href={"/attractions/" + item.id}
+                                    >
+                                        {" "}
+                                        Read More
+                                    </Link>
                                 </div>
-                                <div className="">
-                                    <h1 className="text-2xl font-bold text-gray-900">Hero : {item.localized_name}</h1>
-                                    <p className="text-lg text-gray-700" >Attraction : {item.primary_attr}</p>
-                                    <p className="text-lg text-gray-700">Type : {item.attack_type}</p>
-                                    <Link className="text-lg text-sky-700 hover:text-sky-500" href={"/attractions/" + item.id}> Read More</Link>
-                                </div>
-                                <button className="inline-block px-4 py-2 mt-1 text-base font-medium text-white bg-green-500 rounded-md hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75" onClick={() => saveItem(item)}>Favorite</button>
-                            </div>
-                        </div>
+                                <Buttom
+                                    onClick={() => saveItem(item)}
+                                >
+                                    Favorite
+                                </Buttom>
+                            </CardBody>
+                        </Card>
                     ))}
                 </div>
             </div>
-
         </>
     );
-}
+};
